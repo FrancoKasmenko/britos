@@ -1,23 +1,17 @@
 // src/components/Products.tsx
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { loadStripe } from "@stripe/stripe-js";
 import { motion } from "framer-motion";
 import Link from "next/link";
 
 type Product = {
   id: string;
   name: string;
-  price: number;
-  image: string;
-  priceId: string;
+  price: number; // centavos
+  image: string; // /public/*
+  url: string; // enlace externo (Amazon, Etsy, etc.)
 };
 
-const stripePromise = loadStripe(
-  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
-);
-
-// media query segura para SSR
 function useMediaQuery(query: string) {
   const [match, setMatch] = useState<boolean | null>(null);
   useEffect(() => {
@@ -41,36 +35,35 @@ export default function Products() {
         name: "Gel",
         price: 18_00,
         image: "/gel.jpg",
-        priceId: "price_xxx",
+        url: "https://www.amazon.com/dp/XXXXXXXX", // <- reemplaza
       },
       {
         id: "powder",
         name: "Styling Powder",
         price: 22_00,
         image: "/powder.jpg",
-        priceId: "price_xxx",
+        url: "https://www.amazon.com/dp/YYYYYYYY",
       },
       {
         id: "salt",
         name: "Sea Salt Spray",
         price: 20_00,
         image: "/sea_salt_spray.jpg",
-        priceId: "price_xxx",
+        url: "https://www.amazon.com/dp/ZZZZZZZZ",
       },
     ]);
   }, []);
 
   if (isLg === null) return null;
+  return isLg ? (
+    <ProductsDesktop items={items} />
+  ) : (
+    <ProductsMobile items={items} />
+  );
 }
 
 // ≥1024: 900px exactos, 3 col
-function ProductsDesktop({
-  items,
-  onCheckout,
-}: {
-  items: Product[];
-  onCheckout: (priceId: string, id: string) => Promise<void>;
-}) {
+function ProductsDesktop({ items }: { items: Product[] }) {
   const vw = 900;
   const cardsPerView = 3;
   const gap = 24;
@@ -90,13 +83,7 @@ function ProductsDesktop({
           transition={{ type: "spring", stiffness: 260, damping: 30 }}
         >
           {items.map((p) => (
-            <Card
-              key={p.id}
-              p={p}
-              cardW={cardW}
-              imgH="h-80"
-              onCheckout={onCheckout}
-            />
+            <Card key={p.id} p={p} cardW={cardW} imgH="h-80" />
           ))}
         </motion.div>
       </div>
@@ -114,13 +101,7 @@ function ProductsDesktop({
 }
 
 // <1024: 350 / 700, 1–2 col
-function ProductsMobile({
-  items,
-  onCheckout,
-}: {
-  items: Product[];
-  onCheckout: (priceId: string, id: string) => Promise<void>;
-}) {
+function ProductsMobile({ items }: { items: Product[] }) {
   const vpRef = useRef<HTMLDivElement | null>(null);
   const [vw, setVw] = useState(0);
 
@@ -156,13 +137,7 @@ function ProductsMobile({
           transition={{ type: "spring", stiffness: 260, damping: 30 }}
         >
           {items.map((p) => (
-            <Card
-              key={p.id}
-              p={p}
-              cardW={cardW}
-              imgH="h-72 sm:h-80"
-              onCheckout={onCheckout}
-            />
+            <Card key={p.id} p={p} cardW={cardW} imgH="h-72 sm:h-80" />
           ))}
         </motion.div>
       </div>
@@ -180,18 +155,8 @@ function ProductsMobile({
 }
 
 // UI
-function Card({
-  p,
-  cardW,
-  imgH,
-  onCheckout,
-}: {
-  p: Product;
-  cardW: number;
-  imgH: string;
-  onCheckout: (priceId: string, id: string) => Promise<void>;
-}) {
-  const href = `/products/${p.id}`;
+function Card({ p, cardW, imgH }: { p: Product; cardW: number; imgH: string }) {
+  const href = `/products/${p.id}`; // detalle interno
   return (
     <div
       style={{ width: cardW, minWidth: cardW }}
@@ -216,12 +181,14 @@ function Card({
             ${(p.price / 100).toFixed(2)}
           </p>
         </div>
-        <button
-          onClick={() => onCheckout(p.priceId, p.id)}
+        <a
+          href={p.url}
+          target="_blank"
+          rel="noopener"
           className="px-4 py-2 rounded-lg font-medium bg-white text-black hover:bg-blue-100"
         >
           Comprar
-        </button>
+        </a>
       </div>
     </div>
   );
