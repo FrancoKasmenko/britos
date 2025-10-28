@@ -208,16 +208,6 @@ function getProduct(slug: string): Product | null {
   return DB[slug] ?? null;
 }
 
-async function checkout(priceId: string) {
-  const res = await fetch("/api/checkout", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ priceId }),
-  });
-  const { sessionId } = await res.json();
-  return sessionId; // usa stripe.redirectToCheckout en tu flujo real
-}
-
 // ==== Página cliente ====
 export default function ClientProductPage({ slug }: { slug: string }) {
   const product = useMemo(() => getProduct(slug), [slug]);

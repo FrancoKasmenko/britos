@@ -60,19 +60,6 @@ export default function Products() {
     ]);
   }, []);
 
-  const checkout = async (priceId: string, id: string) => {
-    const res = await fetch("/api/checkout", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ priceId }),
-    });
-    const { sessionId } = await res.json();
-    const stripe = (await stripePromise) as unknown as {
-      redirectToCheckout: (o: { sessionId: string }) => Promise<unknown>;
-    };
-    await stripe.redirectToCheckout({ sessionId });
-  };
-
   if (isLg === null) return null;
 
   return isLg ? (
