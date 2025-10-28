@@ -61,12 +61,6 @@ export default function Products() {
   }, []);
 
   if (isLg === null) return null;
-
-  return isLg ? (
-    <ProductsDesktop items={items} onCheckout={checkout} />
-  ) : (
-    <ProductsMobile items={items} onCheckout={checkout} />
-  );
 }
 
 // ≥1024: 900px exactos, 3 col

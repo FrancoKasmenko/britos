@@ -453,17 +453,6 @@ function BuyBox({ p }: { p: Product }) {
   const [loading, setLoading] = useState(false);
   const priceUSD = (p.price / 100).toFixed(2);
 
-  const addToCart = async () => {
-    setLoading(true);
-    try {
-      const sessionId = await checkout(p.priceId);
-      console.log("sessionId", sessionId);
-      // Integrar stripe.redirectToCheckout aquí si corresponde.
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <div className="space-y-4">
       <div>
@@ -522,7 +511,6 @@ function BuyBox({ p }: { p: Product }) {
 
       <div className="flex gap-3">
         <button
-          onClick={addToCart}
           disabled={loading}
           className="px-5 py-3 rounded-xl bg-white text-black font-medium hover:bg-blue-100 disabled:opacity-60"
         >
@@ -548,7 +536,6 @@ function BuyBox({ p }: { p: Product }) {
           <p className="text-white/90 font-medium">{p.name}</p>
         </div>
         <button
-          onClick={addToCart}
           disabled={loading}
           className="px-4 py-2 rounded-lg bg-white text-black font-medium"
         >
