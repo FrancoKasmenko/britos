@@ -523,7 +523,7 @@ function BuyBox({ p }: { p: Product }) {
 
       <div className="text-sm text-white/60">
         <p>{p.net}</p>
-        <p className="mt-1">Pago seguro con Stripe. Envíos USA 24–48 h.</p>
+        <p className="mt-1">Pago seguro con Amazon. Envíos USA 24–48 h.</p>
       </div>
 
       {/* Sticky CTA móvil */}
