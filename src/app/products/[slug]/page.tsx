@@ -1,11 +1,13 @@
-// app/products/[slug]/page.tsx  // SERVER COMPONENT (sin "use client")
+
 import ClientProductPage from "./product-client";
 
-export default async function Page({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
-  const { slug } = await params; // Next 16: params es Promise
+export const dynamicParams = false;
+
+export async function generateStaticParams() {
+  return [{ slug: "gel" }, { slug: "powder" }, { slug: "salt" }];
+}
+
+export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
   return <ClientProductPage slug={slug} />;
 }
