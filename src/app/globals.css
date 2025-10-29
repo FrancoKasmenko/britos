@@ -1,9 +1,6 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+:root { color-scheme: dark; }
 
 @theme inline {
   --color-background: var(--background);
@@ -34,18 +31,18 @@ body {
   --app-font: var(--font-inter);
 }
 
-/* Aplica global */
-html,
-body,
-* {
-  font-family: var(--app-font), ui-sans-serif, system-ui, -apple-system,
-    "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans",
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+html, body {
+  background: #08111d;
+  color: #ffffff;
+  scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-html,
-body {
-  scroll-behavior: smooth;
+:root { --app-font: var(--font-inter); }
+*, html, body {
+  font-family: var(--app-font), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans",
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }
+
