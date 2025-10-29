@@ -16,7 +16,7 @@ export default function Navbar() {
       <nav className="mx-auto w-full max-w-[1200px] px-3 sm:px-4 h-16 flex items-center justify-between">
         {/* Logo */}
         <a
-          href="http://localhost:3000/"
+          href="https://www.britos.com"
           className="flex items-center gap-3 min-w-0"
         >
           <Image
