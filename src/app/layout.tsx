@@ -9,11 +9,11 @@ const siteUrl = "https://www.britos.com"; // tu dominio
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Britos Barber",
-    template: "%s | Britos Barber"
+    default: "Britos",
+    template: "%s | Britos"
   },
-  description: "Productos de barbería de alto rendimiento. Compra gel, polvo y sea salt spray.",
-  applicationName: "Britos Barber",
+  description: "Marca personal. Productos de barbería de alto rendimiento. Compra gel, polvo y sea salt spray.",
+  applicationName: "Britos",
   keywords: ["barbería", "gel", "polvo de peinar", "sea salt spray", "Britos"],
   authors: [{ name: "Gastón Britos" }],
   creator: "Britos",
@@ -23,16 +23,16 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     url: siteUrl,
-    siteName: "Britos Barber",
-    title: "Britos Barber",
-    description: "Productos de barbería de alto rendimiento.",
-    images: [{ url: "/opengraph-image.png", width: 1200, height: 630, alt: "Britos Barber" }],
+    siteName: "Britos",
+    title: "Britos",
+    description: "Marca personal. Productos de barbería de alto rendimiento.",
+    images: [{ url: "/opengraph-image.png", width: 1200, height: 630, alt: "Britos" }],
     locale: "es_US"
   },
   twitter: {
     card: "summary_large_image",
-    title: "Britos Barber",
-    description: "Productos de barbería de alto rendimiento.",
+    title: "Britos",
+    description: "Marca personal. Productos de barbería de alto rendimiento.",
     images: ["/twitter-image.png"]
   },
   icons: {
@@ -62,7 +62,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "Organization",
-              name: "Britos Barber",
+              name: "Britos",
               url: siteUrl,
               logo: `${siteUrl}/logo-britos-mark.png`,
               sameAs: [
