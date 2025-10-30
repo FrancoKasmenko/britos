@@ -1,7 +1,8 @@
 import HeroVideo from "../../components/HeroVideo";
 import Products from "../../components/Products";
 import About from "../../components/About";
-import Ventures from "../../components/Ventures"; // desde src/app/page.tsx
+import Ventures from "../../components/Ventures";
+import BooksySection from "../../components/BooksySection";
 
 export default function Page() {
   return (
@@ -14,6 +15,10 @@ export default function Page() {
       <section id="about" className="max-w-6xl mx-auto px-4">
         <About />
       </section>
+      <section id="booksy" className="max-w-6xl mx-auto px-4">
+        <BooksySection fallbackUrl="https://booksy.com/en-us/1347158_gaston-britos_barber-shop_123456_miami" />
+      </section>
+            
       <section id="negocios" className="max-w-6xl mx-auto px-4 pb-24">
         <Ventures />
       </section>
