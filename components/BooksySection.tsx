@@ -54,31 +54,6 @@ export default function BooksySection({ fallbackUrl }: Props) {
   </motion.button>
 </div>
 
-      {/* Caja con pasada de máquina */}
-      <div className="relative h-64 rounded-2xl border border-white/10 bg-[#0b1526] overflow-hidden">
-        <motion.div
-          className="absolute inset-0 bg-[#0b1526]"
-          initial={false}
-          animate={open ? { clipPath: "inset(100% 0% 0% 0%)" } : { clipPath: "inset(0% 0% 0% 0%)" }}
-          transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-        />
-        {open && !reveal && (
-          <motion.img
-            src="/clippers.png"
-            alt=""
-            className="absolute top-2 left-[-20%] z-10 w-40 md:w-52 pointer-events-none"
-            initial={{ x: 0, y: -6, rotate: -8, opacity: 0 }}
-            animate={{
-              x: "140%",
-              y: [-6, 2, -3, 4],
-              rotate: [-8, -5, -7, -6],
-              opacity: 1,
-            }}
-            transition={{ duration: 0.95, ease: "easeInOut" }}
-          />
-        )}
-      </div>
-
       {/* Overlay + diálogo */}
       <AnimatePresence>
         {open && (
