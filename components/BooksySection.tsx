@@ -81,7 +81,6 @@ export default function BooksySection({ fallbackUrl }: Props) {
   return (
     <section id="agenda" className="mx-auto max-w-[1100px] px-0 sm:px-4">
       <div className="mb-4 flex items-center gap-3">
-        <h2 className="text-3xl font-bold">Agendar un corte</h2>
 
         {/* Botón = imagen clippers */}
         <motion.button
