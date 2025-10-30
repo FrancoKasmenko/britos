@@ -53,7 +53,7 @@ export default function BooksySection({ fallbackUrl }: Props) {
         </motion.button>
         
       </div>
-      <h2 className="text-3xl font-bold">Agendar un corte</h2>
+      <h2 className="text-3xl font-bold text-center">Agendar un corte</h2>
 
       <AnimatePresence>
         {open && (
