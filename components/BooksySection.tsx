@@ -5,7 +5,8 @@ import { motion, AnimatePresence } from "framer-motion";
 
 type Props = { fallbackUrl?: string };
 
-const DEFAULT_BOOKSY_URL = "https://booksy.com/widget/index.html?id=1347158&businessId=&appointmentUid=&lang=en-US&country=us&mode=dialog&theme=default&uniqueId=12ef89f1b8";
+const DEFAULT_BOOKSY_URL =
+  "https://booksy.com/widget/index.html?id=1347158&businessId=&appointmentUid=&lang=en-US&country=us&mode=dialog&theme=default&uniqueId=12ef89f1b8";
 
 export default function BooksySection({ fallbackUrl }: Props) {
   const [open, setOpen] = useState(false);
@@ -46,14 +47,11 @@ export default function BooksySection({ fallbackUrl }: Props) {
           <img
             src="/clippers.png"
             alt="Abrir agenda Booksy"
-            className="h-10 md:h-12 w-auto select-none"
-            style={{ width: 500, height: 180 }}
+            className="h-30 w-auto select-none [@media(min-width:500px)]:h-[180px]"
             draggable={false}
           />
         </motion.button>
-        
       </div>
-      <h2 className="text-3xl font-bold text-center">Agendar un corte</h2>
 
       <AnimatePresence>
         {open && (

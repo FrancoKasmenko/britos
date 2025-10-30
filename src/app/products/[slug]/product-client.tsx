@@ -3,10 +3,16 @@
 
 import { useMemo, useState } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 // ==== Tipos ====
-type Media = { type: "image" | "video"; src: string; alt?: string };
+type Media = {
+  type: "image" | "video";
+  src: string;
+  alt?: string;
+  /** Miniatura para videos. Opcional; si falta se usa <video preload="metadata"> */
+  poster?: string;
+};
 type Product = {
   slug: string;
   name: string;
@@ -15,6 +21,7 @@ type Product = {
   rating: number;
   reviews: number;
   stock: number;
+  soldOut: boolean;
   net: string;
   badges: string[];
   priceId: string;
@@ -39,12 +46,17 @@ const DB: Record<string, Product> = {
     rating: 4.8,
     reviews: 129,
     stock: 42,
+    soldOut: false,
     net: "150 ml / 5.07 fl oz",
     badges: ["Envío 24–48h USA", "Devolución 30 días", "Pago seguro"],
     priceId: "price_xxx_gel",
     gallery: [
-      { type: "video", src: "/media/gel-hero.mp4" },
       { type: "image", src: "/gel.jpg", alt: "Gel by Britos packshot" },
+      {
+        type: "video",
+        src: "/media/gel-hero.mp4",
+        poster: "/media/gel-hero-poster.jpg",
+      },
       { type: "image", src: "/gel_tex.jpg", alt: "Textura del gel" },
       { type: "image", src: "/gel_use.jpg", alt: "Aplicación en cabello" },
       { type: "image", src: "/gel_lifestyle.jpg", alt: "Lifestyle" },
@@ -103,8 +115,9 @@ const DB: Record<string, Product> = {
     rating: 4.7,
     reviews: 98,
     stock: 31,
+    soldOut: true,
     net: "20 g / 0.7 oz",
-    badges: ["Envío 24–48h USA", "Pago con Apple Pay", "Hecho en USA"],
+    badges: ["Envío 24–48h USA", "Pago en Amazon", "Hecho en USA"],
     priceId: "price_xxx_powder",
     gallery: [
       { type: "image", src: "/powder.jpg", alt: "Styling Powder packshot" },
@@ -153,7 +166,8 @@ const DB: Record<string, Product> = {
     price: 2000,
     rating: 4.6,
     reviews: 74,
-    stock: 55,
+    stock: 0,
+    soldOut: true,
     net: "200 ml / 6.76 fl oz",
     badges: ["Libre de parabenos", "Cruelty-free", "Pago seguro"],
     priceId: "price_xxx_salt",
@@ -355,7 +369,7 @@ export default function ClientProductPage({ slug }: { slug: string }) {
               priceCurrency: "USD",
               price: (product.price / 100).toFixed(2),
               availability:
-                product.stock > 0
+                product.stock > 0 && !product.soldOut
                   ? "https://schema.org/InStock"
                   : "https://schema.org/OutOfStock",
             },
@@ -410,11 +424,13 @@ function Gallery({ media, name }: { media: Media[]; name: string }) {
         ) : (
           <video
             src={current.src}
+            poster={current.poster}
             className="w-full h-full object-cover"
             autoPlay
             muted
             loop
             playsInline
+            controls
           />
         )}
       </div>
@@ -427,6 +443,7 @@ function Gallery({ media, name }: { media: Media[]; name: string }) {
             className={`relative aspect-square overflow-hidden rounded-xl border ${
               i === active ? "border-blue-400" : "border-white/10"
             }`}
+            aria-label={`Vista ${i + 1}`}
           >
             {m.type === "image" ? (
               <Image
@@ -437,9 +454,7 @@ function Gallery({ media, name }: { media: Media[]; name: string }) {
                 sizes="100px"
               />
             ) : (
-              <div className="w-full h-full grid place-items-center bg-black/60">
-                <span className="text-xs text-white/90">Video</span>
-              </div>
+              <VideoThumb m={m} />
             )}
           </button>
         ))}
@@ -448,15 +463,56 @@ function Gallery({ media, name }: { media: Media[]; name: string }) {
   );
 }
 
+function VideoThumb({ m }: { m: Media }) {
+  return (
+    <div className="w-full h-full">
+      {m.poster ? (
+        <Image
+          src={m.poster}
+          alt={m.alt ?? "Video"}
+          fill
+          className="object-cover"
+        />
+      ) : (
+        <video
+          src={m.src}
+          preload="metadata"
+          className="w-full h-full object-cover"
+          muted
+        />
+      )}
+      {/* Overlay play */}
+      <div className="absolute inset-0 grid place-items-center">
+        <span className="inline-flex h-8 w-8 rounded-full bg-black/60 ring-1 ring-white/30">
+          {/* triángulo play */}
+          <svg viewBox="0 0 24 24" className="m-auto h-4 w-4 fill-white/90">
+            <path d="M8 5v14l11-7z" />
+          </svg>
+        </span>
+      </div>
+    </div>
+  );
+}
+
 function BuyBox({ p }: { p: Product }) {
   const [qty, setQty] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [contactOpen, setContactOpen] = useState(false);
   const priceUSD = (p.price / 100).toFixed(2);
+
+  const disableBuy = p.soldOut || p.stock <= 0;
 
   return (
     <div className="space-y-4">
       <div>
-        <h1 className="text-3xl font-bold">{p.name}</h1>
+        <div className="flex items-center gap-2">
+          <h1 className="text-3xl font-bold">{p.name}</h1>
+          {p.soldOut && (
+            <span className="ml-2 rounded-full bg-red-500/20 text-red-300 text-xs px-2 py-0.5">
+              Agotado
+            </span>
+          )}
+        </div>
         <p className="text-white/70 mt-1">{p.subtitle}</p>
         <div className="mt-3 flex items-center gap-3 text-sm">
           <span className="text-white/90">${priceUSD}</span>
@@ -465,8 +521,8 @@ function BuyBox({ p }: { p: Product }) {
             ⭐ {p.rating} ({p.reviews})
           </span>
           <span className="text-white/60">•</span>
-          <span className={p.stock > 0 ? "text-green-400" : "text-red-400"}>
-            {p.stock > 0 ? "En stock" : "Sin stock"}
+          <span className={disableBuy ? "text-red-400" : "text-green-400"}>
+            {disableBuy ? "Sin stock" : "En stock"}
           </span>
         </div>
         <div className="mt-3 flex gap-2 flex-wrap">
@@ -511,13 +567,19 @@ function BuyBox({ p }: { p: Product }) {
 
       <div className="flex gap-3">
         <button
-          disabled={loading}
+          disabled={disableBuy || loading}
           className="px-5 py-3 rounded-xl bg-white text-black font-medium hover:bg-blue-100 disabled:opacity-60"
         >
-          {loading ? "Procesando…" : "Comprar ahora"}
+          {disableBuy ? "Agotado" : loading ? "Procesando…" : "Comprar ahora"}
         </button>
-        <button className="px-5 py-3 rounded-xl border border-white/15 hover:border-white/30">
-          Agregar al carrito
+
+        {/* Botón verde -> abre modal de contacto */}
+        <button
+          type="button"
+          onClick={() => setContactOpen(true)}
+          className="px-5 py-3 rounded-xl bg-green-500 hover:bg-green-400 text-black font-medium"
+        >
+          Enviar mensaje
         </button>
       </div>
 
@@ -535,13 +597,100 @@ function BuyBox({ p }: { p: Product }) {
         <div>
           <p className="text-white/90 font-medium">{p.name}</p>
         </div>
-        <button
-          disabled={loading}
-          className="px-4 py-2 rounded-lg bg-white text-black font-medium"
-        >
-          {loading ? "..." : "Comprar"}
-        </button>
+        <div className="flex gap-2">
+          <button
+            disabled={disableBuy || loading}
+            className="px-4 py-2 rounded-lg bg-white text-black font-medium disabled:opacity-60"
+          >
+            {disableBuy ? "Agotado" : "Comprar"}
+          </button>
+          <button
+            onClick={() => setContactOpen(true)}
+            className="px-4 py-2 rounded-lg bg-green-500 text-black font-medium"
+          >
+            Mensaje
+          </button>
+        </div>
       </motion.div>
+
+      <ContactModal
+        open={contactOpen}
+        onClose={() => setContactOpen(false)}
+        productName={p.name}
+      />
     </div>
+  );
+}
+
+function ContactModal({
+  open,
+  onClose,
+  productName,
+}: {
+  open: boolean;
+  onClose: () => void;
+  productName: string;
+}) {
+  const phoneIntl = "+16452234957";
+  const enc = (s: string) => encodeURIComponent(s);
+  const baseMsg = `Hola, quiero ${productName} — desde la web.`;
+  const wa = `https://wa.me/16452234957?text=${enc(baseMsg)}`;
+  const sms = `sms:${phoneIntl}?&body=${enc(baseMsg)}`;
+
+  return (
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          className="fixed inset-0 z-[120] bg-black/60 backdrop-blur-sm"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={onClose}
+        >
+          <div
+            className="absolute inset-0 grid place-items-center p-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <motion.div
+              className="w-[92vw] max-w-md rounded-2xl bg-[#0b1526] border border-white/10 p-5"
+              initial={{ scale: 0.96, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.96, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 260, damping: 26 }}
+            >
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-lg font-semibold">Enviar mensaje</h3>
+                <button
+                  onClick={onClose}
+                  className="h-8 w-8 rounded-full bg-white/10 hover:bg-white/20 text-white"
+                  aria-label="Cerrar"
+                >
+                  ✕
+                </button>
+              </div>
+              <p className="text-white/70 text-sm mb-4">
+                Elegí cómo querés contactar a Britos.
+              </p>
+              <div className="grid gap-3">
+                <a
+                  href={wa}
+                  target="_blank"
+                  rel="noopener"
+                  className="w-full text-center px-4 py-3 rounded-xl bg-green-500 hover:bg-green-400 text-black font-medium"
+                >
+                  WhatsApp (+1 645 223-4957)
+                </a>
+                <a
+                  href={sms}
+                  className="w-full text-center px-4 py-3 rounded-xl bg-white hover:bg-blue-100 text-black font-medium"
+                >
+                  SMS / iMessage
+                </a>
+              </div>
+            </motion.div>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
