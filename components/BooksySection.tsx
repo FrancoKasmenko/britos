@@ -48,6 +48,7 @@ export default function BooksySection({ fallbackUrl }: Props) {
       src="/clippers.png"
       alt="Abrir agenda Booksy"
       className="h-10 md:h-12 w-auto select-none"
+      style="width: 500px; height: 300px"
       draggable={false}
     />
   </motion.button>
