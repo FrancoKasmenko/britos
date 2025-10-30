@@ -1,17 +1,18 @@
-// src/components/BooksyDialog.tsx
+// src/components/BooksySection.tsx
 "use client";
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-const BOOKSY_URL =
+type Props = { fallbackUrl?: string };
+
+const DEFAULT_BOOKSY_URL =
   "https://booksy.com/widget/index.html?id=1347158&businessId=&appointmentUid=&lang=en-US&country=us&mode=dialog&theme=default&uniqueId=12ef89f1b8";
 
-export default function BooksyDialog() {
+export default function BooksySection({ fallbackUrl }: Props) {
   const [open, setOpen] = useState(false);
-  const [reveal, setReveal] = useState(false); // muestra el iframe tras la “pasada” de la máquina
+  const [reveal, setReveal] = useState(false);
 
-  // bloquear scroll del body cuando está abierto
   useEffect(() => {
     if (!open) return;
     const prev = document.body.style.overflow;
@@ -23,8 +24,7 @@ export default function BooksyDialog() {
 
   const onOpen = () => {
     setOpen(true);
-    // espera a que pase la cortadora y luego muestra el iframe
-    window.setTimeout(() => setReveal(true), 900);
+    window.setTimeout(() => setReveal(true), 900); // tras la animación
   };
 
   const onClose = () => {
@@ -32,8 +32,10 @@ export default function BooksyDialog() {
     setOpen(false);
   };
 
+  const BOOKSY_URL = DEFAULT_BOOKSY_URL || fallbackUrl;
+
   return (
-    <section id="agenda" className="mx-auto max-w-[1100px] px-4">
+    <section id="agenda" className="mx-auto max-w-[1100px] px-0 sm:px-4">
       <div className="mb-4 flex items-center gap-3">
         <h2 className="text-3xl font-bold">Agendar un corte</h2>
         <button
@@ -44,16 +46,14 @@ export default function BooksyDialog() {
         </button>
       </div>
 
-      {/* Caja decorativa con la pasada de la máquina */}
+      {/* Caja con pasada de máquina */}
       <div className="relative h-64 rounded-2xl border border-white/10 bg-[#0b1526] overflow-hidden">
-        {/* capa que se “corta” */}
         <motion.div
           className="absolute inset-0 bg-[#0b1526]"
           initial={false}
           animate={open ? { clipPath: "inset(100% 0% 0% 0%)" } : { clipPath: "inset(0% 0% 0% 0%)" }}
           transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
         />
-        {/* máquina recorriendo */}
         {open && !reveal && (
           <motion.img
             src="/clippers.png"
@@ -71,7 +71,7 @@ export default function BooksyDialog() {
         )}
       </div>
 
-      {/* Overlay + diálogo Booksy */}
+      {/* Overlay + diálogo */}
       <AnimatePresence>
         {open && (
           <motion.div
@@ -83,7 +83,6 @@ export default function BooksyDialog() {
           >
             <div
               className="absolute inset-0 grid place-items-center p-4"
-              // detener cierre al click dentro del modal
               onClick={(e) => e.stopPropagation()}
             >
               <motion.div
@@ -93,7 +92,6 @@ export default function BooksyDialog() {
                 exit={{ scale: 0.96, opacity: 0 }}
                 transition={{ type: "spring", stiffness: 260, damping: 26 }}
               >
-                {/* botón cerrar */}
                 <button
                   onClick={onClose}
                   className="absolute top-3 right-3 z-10 h-9 w-9 rounded-full bg-white/10 hover:bg-white/20 text-white"
@@ -102,11 +100,10 @@ export default function BooksyDialog() {
                   ✕
                 </button>
 
-                {/* iframe */}
                 {reveal ? (
                   <iframe
                     id="booksy-iframe"
-                    src={BOOKSY_URL}
+                    src={BOOKSY_URL ?? fallbackUrl ?? ""}
                     className="absolute inset-0 w-full h-full border-0"
                     loading="eager"
                     referrerPolicy="no-referrer"
