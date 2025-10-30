@@ -47,11 +47,13 @@ export default function BooksySection({ fallbackUrl }: Props) {
             src="/clippers.png"
             alt="Abrir agenda Booksy"
             className="h-10 md:h-12 w-auto select-none"
-            style={{ width: 500, height: 300 }}
+            style={{ width: 500, height: 180 }}
             draggable={false}
           />
         </motion.button>
+        
       </div>
+      <h2 className="text-3xl font-bold">Agendar un corte</h2>
 
       <AnimatePresence>
         {open && (
