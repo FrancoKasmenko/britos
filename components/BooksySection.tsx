@@ -1,38 +1,17 @@
 // src/components/BooksySection.tsx
 "use client";
-
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 type Props = { fallbackUrl?: string };
 
-const BOOKSY_SCRIPT_SRC =
-  "https://booksy.com/widget/code.js?id=1347158&country=us&lang=en-US";
-
-const BOOKSY_IFRAME_URL =
-  "https://booksy.com/widget/index.html?id=1347158&businessId=&appointmentUid=&lang=en-US&country=us&mode=dialog&theme=default&uniqueId=booksy-ui";
+const DEFAULT_BOOKSY_URL =
+  "https://booksy.com/widget/index.html?id=1347158&businessId=&appointmentUid=&lang=en-US&country=us&mode=dialog&theme=default&uniqueId=12ef89f1b8";
 
 export default function BooksySection({ fallbackUrl }: Props) {
   const [open, setOpen] = useState(false);
-  const [scriptReady, setScriptReady] = useState(false);
   const [reveal, setReveal] = useState(false);
-  const scriptLoaded = useRef(false);
 
-  // Carga perezosa del script oficial de Booksy
-  const ensureScript = () => {
-    if (scriptLoaded.current) return;
-    const s = document.createElement("script");
-    s.src = BOOKSY_SCRIPT_SRC;
-    s.async = true;
-    s.onload = () => {
-      scriptLoaded.current = true;
-      setScriptReady(true);
-    };
-    s.onerror = () => setScriptReady(false);
-    document.body.appendChild(s);
-  };
-
-  // Bloquear scroll con overlay
   useEffect(() => {
     if (!open) return;
     const prev = document.body.style.overflow;
@@ -42,67 +21,66 @@ export default function BooksySection({ fallbackUrl }: Props) {
     };
   }, [open]);
 
-  // Abrir usando la API del script; si falla, mostramos iframe fallback
   const onOpen = () => {
-    ensureScript();
     setOpen(true);
-
-    // Intento con el diálogo nativo de Booksy si existe la API global
-    const tryBooksy = () => {
-      // @ts-ignore
-      const api = (window as any).booksy;
-      if (api && typeof api.openDialog === "function") {
-        // @ts-ignore
-        api.openDialog();
-        setReveal(false); // usamos diálogo de Booksy, no nuestro iframe
-      } else {
-        // Fallback: mostramos nuestro iframe
-        setReveal(true);
-      }
-    };
-
-    // pequeño delay por si el script termina de inicializar
-    setTimeout(tryBooksy, scriptReady ? 0 : 300);
+    window.setTimeout(() => setReveal(true), 900); // tras la animación
   };
 
   const onClose = () => {
-    setOpen(false);
     setReveal(false);
-    // cerrar overlay del script si quedó abierto
-    // @ts-ignore
-    const api = (window as any).booksy;
-    if (api && typeof api.closeDialog === "function") {
-      api.closeDialog();
-    }
+    setOpen(false);
   };
 
-  const FALLBACK_URL = fallbackUrl ?? BOOKSY_IFRAME_URL;
+  const BOOKSY_URL = DEFAULT_BOOKSY_URL || fallbackUrl;
 
   return (
     <section id="agenda" className="mx-auto max-w-[1100px] px-0 sm:px-4">
       <div className="mb-4 flex items-center gap-3">
+  <motion.button
+    type="button"
+    onClick={onOpen}
+    aria-label="Abrir agenda de turnos"
+    whileHover={{ rotate: -4, y: -2 }}
+    whileTap={{ scale: 0.96 }}
+    className="inline-flex"
+  >
+    <img
+      src="/clippers.png"
+      alt="Abrir agenda Booksy"
+      className="h-10 md:h-12 w-auto select-none"
+      draggable={false}
+    />
+  </motion.button>
+</div>
 
-        {/* Botón = imagen clippers */}
-        <motion.button
-          type="button"
-          onClick={onOpen}
-          aria-label="Abrir agenda de turnos"
-          whileHover={{ rotate: -4, y: -2 }}
-          whileTap={{ scale: 0.96 }}
-          className="inline-flex"
-        >
-          <img
+      {/* Caja con pasada de máquina */}
+      <div className="relative h-64 rounded-2xl border border-white/10 bg-[#0b1526] overflow-hidden">
+        <motion.div
+          className="absolute inset-0 bg-[#0b1526]"
+          initial={false}
+          animate={open ? { clipPath: "inset(100% 0% 0% 0%)" } : { clipPath: "inset(0% 0% 0% 0%)" }}
+          transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+        />
+        {open && !reveal && (
+          <motion.img
             src="/clippers.png"
-            alt="Abrir agenda Booksy"
-            className="h-10 md:h-12 w-auto select-none"
-            draggable={false}
+            alt=""
+            className="absolute top-2 left-[-20%] z-10 w-40 md:w-52 pointer-events-none"
+            initial={{ x: 0, y: -6, rotate: -8, opacity: 0 }}
+            animate={{
+              x: "140%",
+              y: [-6, 2, -3, 4],
+              rotate: [-8, -5, -7, -6],
+              opacity: 1,
+            }}
+            transition={{ duration: 0.95, ease: "easeInOut" }}
           />
-        </motion.button>
+        )}
       </div>
 
-      {/* Overlay propio solo para el fallback iframe */}
+      {/* Overlay + diálogo */}
       <AnimatePresence>
-        {open && reveal && (
+        {open && (
           <motion.div
             className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm"
             initial={{ opacity: 0 }}
@@ -129,14 +107,19 @@ export default function BooksySection({ fallbackUrl }: Props) {
                   ✕
                 </button>
 
-                <iframe
-                  key={Date.now()} // evita cachear sesión del widget
-                  src={FALLBACK_URL}
-                  className="absolute inset-0 w-full h-full border-0"
-                  loading="eager"
-                  // No uses sandbox aquí. Evitá también referrerPolicy estricto.
-                  allow="clipboard-write; fullscreen; geolocation; payment"
-                />
+                {reveal ? (
+                  <iframe
+                    id="booksy-iframe"
+                    src={BOOKSY_URL ?? fallbackUrl ?? ""}
+                    className="absolute inset-0 w-full h-full border-0"
+                    loading="eager"
+                    referrerPolicy="no-referrer"
+                  />
+                ) : (
+                  <div className="absolute inset-0 grid place-items-center text-white/70 text-sm">
+                    Cargando agenda…
+                  </div>
+                )}
               </motion.div>
             </div>
           </motion.div>
