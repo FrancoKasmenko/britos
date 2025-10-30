@@ -23,7 +23,7 @@ export default function BooksySection({ fallbackUrl }: Props) {
 
   const onOpen = () => {
     setOpen(true);
-    window.setTimeout(() => setReveal(true), 900); // tras la animación
+    window.setTimeout(() => setReveal(true), 900);
   };
 
   const onClose = () => {
@@ -31,30 +31,30 @@ export default function BooksySection({ fallbackUrl }: Props) {
     setOpen(false);
   };
 
-  const BOOKSY_URL = DEFAULT_BOOKSY_URL || fallbackUrl;
+  // Prioriza fallback si viene, sino default
+  const BOOKSY_URL = fallbackUrl ?? DEFAULT_BOOKSY_URL;
 
   return (
     <section id="agenda" className="mx-auto max-w-[1100px] px-0 sm:px-4">
       <div className="mb-4 flex items-center gap-3">
-  <motion.button
-    type="button"
-    onClick={onOpen}
-    aria-label="Abrir agenda de turnos"
-    whileHover={{ rotate: -4, y: -2 }}
-    whileTap={{ scale: 0.96 }}
-    className="inline-flex"
-  >
-    <img
-      src="/clippers.png"
-      alt="Abrir agenda Booksy"
-      className="h-10 md:h-12 w-auto select-none"
-      style="width: 500px; height: 300px"
-      draggable={false}
-    />
-  </motion.button>
-</div>
+        <motion.button
+          type="button"
+          onClick={onOpen}
+          aria-label="Abrir agenda de turnos"
+          whileHover={{ rotate: -4, y: -2 }}
+          whileTap={{ scale: 0.96 }}
+          className="inline-flex"
+        >
+          <img
+            src="/clippers.png"
+            alt="Abrir agenda Booksy"
+            className="h-10 md:h-12 w-auto select-none"
+            style={{ width: 500, height: 300 }}
+            draggable={false}
+          />
+        </motion.button>
+      </div>
 
-      {/* Overlay + diálogo */}
       <AnimatePresence>
         {open && (
           <motion.div
@@ -86,7 +86,7 @@ export default function BooksySection({ fallbackUrl }: Props) {
                 {reveal ? (
                   <iframe
                     id="booksy-iframe"
-                    src={BOOKSY_URL ?? fallbackUrl ?? ""}
+                    src={BOOKSY_URL}
                     className="absolute inset-0 w-full h-full border-0"
                     loading="eager"
                     referrerPolicy="no-referrer"
