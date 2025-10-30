@@ -10,29 +10,24 @@ const DEFAULT_BOOKSY_URL =
   "https://booksy.com/widget/index.html?id=1347158&businessId=&appointmentUid=&lang=en-US&country=us&mode=dialog&theme=default&uniqueId=12ef89f1b8";
 
 export default function BooksySection({ fallbackUrl }: Props) {
-  const [open, setOpen] = useState(false);      // modal visible
-  const [reveal, setReveal] = useState(false);  // muestra iframe
-  const [sweep, setSweep] = useState(false);    // animación de “corte” activa
+  const [open, setOpen] = useState(false);
+  const [reveal, setReveal] = useState(false);
 
-  // bloquear scroll al abrir modal
+  // bloquear scroll cuando el modal está abierto
   useEffect(() => {
     if (!open) return;
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    return () => { document.body.style.overflow = prev; };
+    return () => {
+      document.body.style.overflow = prev;
+    };
   }, [open]);
 
   const BOOKSY_URL = fallbackUrl ?? DEFAULT_BOOKSY_URL;
 
-  const handleClickMachine = () => {
-    if (sweep || open) return;
-    setSweep(true);
-    // cuando termina el “corte”, abrir modal y luego el iframe
-    window.setTimeout(() => {
-      setOpen(true);
-      window.setTimeout(() => setReveal(true), 300);
-      setSweep(false);
-    }, 900);
+  const openModal = () => {
+    setOpen(true);
+    setReveal(true); // sin demora: mismo modal que ya usabas
   };
 
   const onClose = () => {
@@ -42,39 +37,28 @@ export default function BooksySection({ fallbackUrl }: Props) {
 
   return (
     <section id="agenda" className="mx-auto max-w-[1100px] px-0 sm:px-4">
-      <h2 className="text-3xl font-bold mb-4">Agendar un corte</h2>
+      {/* Botón = imagen de la máquina */}
+      <div className="flex items-center">
+        <h2 className="text-3xl font-bold mr-3">Agendar un corte</h2>
 
-      {/* Lienzo con la máquina como botón */}
-      <div className="relative h-64 rounded-2xl border border-white/10 bg-[#0b1526] overflow-hidden">
-        {/* Barrido de “corte” */}
-        <motion.div
-          className="absolute inset-0 bg-[#0b1526]"
-          initial={false}
-          animate={sweep ? { clipPath: "inset(100% 0% 0% 0%)" } : { clipPath: "inset(0% 0% 0% 0%)" }}
-          transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-        />
-
-        {/* Máquina como botón. Se oculta durante el sweep o con el modal abierto */}
-        {!sweep && !open && (
-          <motion.button
-            type="button"
-            onClick={handleClickMachine}
-            className="absolute top-6 left-1/2 -translate-x-1/2 focus:outline-none"
-            aria-label="Abrir agenda de turnos"
-            whileHover={{ rotate: -4, y: -2 }}
-            whileTap={{ scale: 0.96 }}
-          >
-            <img
-              src="/clippers.png"
-              alt="Máquina de cortar pelo Britos"
-              className="w-44 md:w-56 drop-shadow-[0_6px_20px_rgba(0,0,0,0.45)]"
-              draggable={false}
-            />
-          </motion.button>
-        )}
+        <motion.button
+          type="button"
+          onClick={openModal}
+          aria-label="Abrir agenda de turnos"
+          whileHover={{ rotate: -4, y: -2 }}
+          whileTap={{ scale: 0.96 }}
+          className="inline-flex"
+        >
+          <img
+            src="/clippers.png"
+            alt="Máquina de cortar pelo Britos"
+            className="h-10 md:h-12 w-auto select-none"
+            draggable={false}
+          />
+        </motion.button>
       </div>
 
-      {/* Overlay + modal con Booksy */}
+      {/* Modal con Booksy (igual al tuyo) */}
       <AnimatePresence>
         {open && (
           <motion.div
