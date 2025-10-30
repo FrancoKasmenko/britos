@@ -15,7 +15,7 @@ export default function Page() {
       <section id="about" className="max-w-6xl mx-auto px-4">
         <About />
       </section>
-      <section id="booksy" className="max-w-6xl mx-auto px-4">
+      <section id="booksy" className="max-w-6xl mx-auto px-4" style="margin-top: -50px; margin-bottom: -50px;">
   <BooksySection fallbackUrl="https://booksy.com/en-us/1347158_gaston-britos_barber-shop_123456_miami" />
 </section>
             
