@@ -1,121 +1,126 @@
-// src/components/BooksySection.tsx
+// src/components/BooksyDialog.tsx
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import Script from "next/script";
-import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
-export default function BooksySection({
-  fallbackUrl,
-}: { fallbackUrl?: string }) {
-  const [open, setOpen] = useState(false);       // mostrar agenda
-  const [loaded, setLoaded] = useState(false);   // widget listo
-  const [clipDone, setClipDone] = useState(false); // fin de animación
-  const scriptLoadedRef = useRef(false);
+const BOOKSY_URL =
+  "https://booksy.com/widget/index.html?id=1347158&businessId=&appointmentUid=&lang=en-US&country=us&mode=dialog&theme=default&uniqueId=12ef89f1b8";
 
-  // cuando “open”, empezamos a vigilar si Booksy inyectó su contenido
+export default function BooksyDialog() {
+  const [open, setOpen] = useState(false);
+  const [reveal, setReveal] = useState(false); // muestra el iframe tras la “pasada” de la máquina
+
+  // bloquear scroll del body cuando está abierto
   useEffect(() => {
     if (!open) return;
-    let t = 0;
-    const id = window.setInterval(() => {
-      t += 1;
-      const injected =
-        document.querySelector("#booksy-widget-target iframe") ||
-        document.querySelector(".booksy-widget");
-      if (injected) {
-        setLoaded(true);
-        window.clearInterval(id);
-      }
-      // cortar a los 8s por seguridad
-      if (t > 80) window.clearInterval(id);
-    }, 100);
-    return () => window.clearInterval(id);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
   }, [open]);
 
+  const onOpen = () => {
+    setOpen(true);
+    // espera a que pase la cortadora y luego muestra el iframe
+    window.setTimeout(() => setReveal(true), 900);
+  };
+
+  const onClose = () => {
+    setReveal(false);
+    setOpen(false);
+  };
+
   return (
-    <section id="agenda" className="relative mx-auto w-full max-w-[1100px] px-4">
-      <div className="mb-6 flex items-center justify-between">
+    <section id="agenda" className="mx-auto max-w-[1100px] px-4">
+      <div className="mb-4 flex items-center gap-3">
         <h2 className="text-3xl font-bold">Agendar un corte</h2>
         <button
-          onClick={() => setOpen(true)}
+          onClick={onOpen}
           className="px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-400 font-medium"
         >
           Ver agenda
         </button>
       </div>
 
-      <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-[#0b1526]">
-        {/* alto mínimo para que no quede vacío mientras carga */}
-        <div className="relative p-0">
-          <div id="booksy-widget-target" className="min-h-[440px] p-4 sm:p-6" />
-        </div>
-
-        {/* Capa que se “corta” para revelar el widget */}
+      {/* Caja decorativa con la pasada de la máquina */}
+      <div className="relative h-64 rounded-2xl border border-white/10 bg-[#0b1526] overflow-hidden">
+        {/* capa que se “corta” */}
         <motion.div
-          aria-hidden
-          className="absolute inset-0 z-10 bg-[#0b1526]"
-          initial={{ clipPath: "inset(0% 0% 0% 0%)" }}
-          animate={
-            open
-              ? { clipPath: "inset(100% 0% 0% 0%)" } // revela de arriba hacia abajo
-              : {}
-          }
+          className="absolute inset-0 bg-[#0b1526]"
+          initial={false}
+          animate={open ? { clipPath: "inset(100% 0% 0% 0%)" } : { clipPath: "inset(0% 0% 0% 0%)" }}
           transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-          onAnimationComplete={() => setClipDone(true)}
         />
-
-        {/* Máquina: se mueve y luego desaparece */}
-        {open && !clipDone && (
+        {/* máquina recorriendo */}
+        {open && !reveal && (
           <motion.img
             src="/clippers.png"
             alt=""
-            aria-hidden
-            className="pointer-events-none absolute z-20 w-40 md:w-52 -top-4 left-[-20%]"
+            className="absolute top-2 left-[-20%] z-10 w-40 md:w-52 pointer-events-none"
             initial={{ x: 0, y: -6, rotate: -8, opacity: 0 }}
             animate={{
               x: "140%",
-              y: [ -6, 2, -3, 4 ],
-              rotate: [ -8, -5, -7, -6 ],
+              y: [-6, 2, -3, 4],
+              rotate: [-8, -5, -7, -6],
               opacity: 1,
             }}
             transition={{ duration: 0.95, ease: "easeInOut" }}
           />
         )}
-
-        {/* Mensaje mientras carga el widget real */}
-        {open && !loaded && (
-          <div className="absolute inset-x-0 bottom-3 z-0 flex justify-center">
-            <span className="text-white/60 text-sm">
-              Cargando agenda…
-              {fallbackUrl && (
-                <>
-                  {" "}
-                  <a
-                    className="underline text-blue-300"
-                    href={fallbackUrl}
-                    target="_blank"
-                    rel="noopener"
-                  >
-                    abrir en Booksy
-                  </a>
-                </>
-              )}
-            </span>
-          </div>
-        )}
       </div>
 
-      {/* Script: se inyecta una sola vez al abrir */}
-      {open && !scriptLoadedRef.current && (
-        <Script
-          src="https://booksy.com/widget/code.js?id=1347158&country=us&lang=en-US"
-          strategy="afterInteractive"
-          onLoad={() => {
-            scriptLoadedRef.current = true;
-            // algunos widgets requieren reinicializar; si Booksy expone una función, llamala aquí
-          }}
-        />
-      )}
+      {/* Overlay + diálogo Booksy */}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+          >
+            <div
+              className="absolute inset-0 grid place-items-center p-4"
+              // detener cierre al click dentro del modal
+              onClick={(e) => e.stopPropagation()}
+            >
+              <motion.div
+                className="relative w-[92vw] max-w-[770px] h-[84vh] rounded-2xl shadow-2xl ring-1 ring-white/15 overflow-hidden bg-[#0b1526]"
+                initial={{ scale: 0.96, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.96, opacity: 0 }}
+                transition={{ type: "spring", stiffness: 260, damping: 26 }}
+              >
+                {/* botón cerrar */}
+                <button
+                  onClick={onClose}
+                  className="absolute top-3 right-3 z-10 h-9 w-9 rounded-full bg-white/10 hover:bg-white/20 text-white"
+                  aria-label="Cerrar"
+                >
+                  ✕
+                </button>
+
+                {/* iframe */}
+                {reveal ? (
+                  <iframe
+                    id="booksy-iframe"
+                    src={BOOKSY_URL}
+                    className="absolute inset-0 w-full h-full border-0"
+                    loading="eager"
+                    referrerPolicy="no-referrer"
+                  />
+                ) : (
+                  <div className="absolute inset-0 grid place-items-center text-white/70 text-sm">
+                    Cargando agenda…
+                  </div>
+                )}
+              </motion.div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }
