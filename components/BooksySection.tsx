@@ -5,8 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 type Props = { fallbackUrl?: string };
 
-const DEFAULT_BOOKSY_URL =
-  "https://booksy.com/widget/index.html?id=1347158&businessId=&appointmentUid=&lang=en-US&country=us&mode=dialog&theme=default&uniqueId=12ef89f1b8";
+const DEFAULT_BOOKSY_URL = "https://booksy.com/widget/index.html?id=1347158&businessId=&appointmentUid=&lang=en-US&country=us&mode=dialog&theme=default&uniqueId=12ef89f1b8";
 
 export default function BooksySection({ fallbackUrl }: Props) {
   const [open, setOpen] = useState(false);
@@ -31,8 +30,7 @@ export default function BooksySection({ fallbackUrl }: Props) {
     setOpen(false);
   };
 
-  // Prioriza fallback si viene, sino default
-  const BOOKSY_URL = fallbackUrl ?? DEFAULT_BOOKSY_URL;
+  const BOOKSY_URL = DEFAULT_BOOKSY_URL || fallbackUrl;
 
   return (
     <section id="agenda" className="mx-auto max-w-[1100px] px-0 sm:px-4">
@@ -86,7 +84,7 @@ export default function BooksySection({ fallbackUrl }: Props) {
                 {reveal ? (
                   <iframe
                     id="booksy-iframe"
-                    src={BOOKSY_URL}
+                    src={BOOKSY_URL ?? fallbackUrl ?? ""}
                     className="absolute inset-0 w-full h-full border-0"
                     loading="eager"
                     referrerPolicy="no-referrer"
