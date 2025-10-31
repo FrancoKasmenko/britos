@@ -1,8 +1,25 @@
 // src/components/HeroVideo.tsx
 "use client";
 import { motion } from "framer-motion";
+import { useEffect, useRef } from "react";
 
 export default function HeroVideo() {
+  const vidRef = useRef<HTMLVideoElement | null>(null);
+
+  useEffect(() => {
+    const v = vidRef.current;
+    if (!v) return;
+    const tryPlay = () => v.play().catch(() => {});
+    const t = setTimeout(tryPlay, 50);
+    window.addEventListener("touchstart", tryPlay, { once: true });
+    window.addEventListener("click", tryPlay, { once: true });
+    return () => {
+      clearTimeout(t);
+      window.removeEventListener("touchstart", tryPlay);
+      window.removeEventListener("click", tryPlay);
+    };
+  }, []);
+
   return (
     <section className="relative h-[64vh] sm:h-[78vh] lg:h-[90vh] w-full">
       <div className="absolute inset-0 bg-[url('/hero-bg.jpg')] bg-cover bg-center opacity-30" />
@@ -13,15 +30,26 @@ export default function HeroVideo() {
           initial={{ scale: 0.97, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.6 }}
-          className="w-full sm:w-[90%] lg:w-[70%] aspect-video rounded-2xl sm:rounded-3xl ring-1 sm:ring-2 ring-blue-400/70 bg-black overflow-hidden shadow-[0_0_25px_-12px_rgba(56,189,248,0.25)]"
+          className="w-full sm:w-[90%] lg:w-[70%] aspect-[9/16] md:aspect-video rounded-2xl sm:rounded-3xl ring-1 sm:ring-2 ring-blue-400/70 bg-black overflow-hidden shadow-[0_0_25px_-12px_rgba(56,189,248,0.25)]"
         >
           <video
-            className="w-full h-full object-cover"
+            ref={vidRef}
+            className="
+    w-full h-full
+    object-cover
+    object-[50%_50%]          /* desktop: centro */
+    md:object-[50%_50%]
+    sm:object-[40%_50%]       /* tablets si querés ajustar */
+    max-md:object-[35%_50%]   /* móvil: mueve el encuadre hacia la derecha */
+  "
             src="/placeholder.mp4"
             autoPlay
-            muted
             loop
+            muted
             playsInline
+            controls
+            preload="metadata"
+            poster="/hero-poster.jpg"
           />
         </motion.div>
       </div>
