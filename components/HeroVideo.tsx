@@ -34,14 +34,7 @@ export default function HeroVideo() {
         >
           <video
             ref={vidRef}
-            className="
-    w-full h-full
-    object-cover
-    object-[50%_50%]          /* desktop: centro */
-    md:object-[50%_50%]
-    sm:object-[40%_50%]       /* tablets si querés ajustar */
-    max-md:object-[35%_50%]   /* móvil: mueve el encuadre hacia la derecha */
-  "
+            className="w-full h-full object-cover object-[50%_50%] md:object-[50%_50%] sm:object-[40%_50%] max-md:object-[35%_50%]"
             src="/placeholder.mp4"
             autoPlay
             loop

@@ -14,6 +14,7 @@ export default function Navbar() {
       className="fixed top-0 inset-x-0 z-50 border-b border-white/10 backdrop-blur supports-[backdrop-filter]:bg-[#060e1a]/60"
     >
       <nav className="mx-auto w-full max-w-[1200px] px-3 sm:px-4 h-16 flex items-center justify-between">
+        {/* Logo */}
         <a
           href="https://www.britos.com"
           className="flex items-center gap-3 min-w-0"
