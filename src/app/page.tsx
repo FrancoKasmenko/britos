@@ -4,6 +4,7 @@ import Products from "../../components/Products";
 import About from "../../components/About";
 import Ventures from "../../components/Ventures";
 import BooksySection from "../../components/BooksySection";
+import CoachingTeaser from "../../components/CoachingTeaser";
 
 export default function Page() {
   return (
@@ -25,6 +26,10 @@ export default function Page() {
         style={{ marginTop: -50, marginBottom: -50 }}
       >
         <BooksySection fallbackUrl="https://booksy.com/en-us/1347158_gaston-britos_barber-shop_123456_miami" />
+      </section>
+
+      <section id="coaching" className="mt-4">
+        <CoachingTeaser />
       </section>
 
       <section id="negocios" className="max-w-6xl mx-auto px-4 pb-24">

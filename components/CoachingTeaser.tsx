@@ -54,7 +54,7 @@ export default function CoachingTeaser() {
 
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
-              href="/coaching-barberia"
+              href="/coaching-barberia/"
               className="px-5 py-3 rounded-xl bg-blue-500 hover:bg-blue-400 font-semibold"
             >
               Saber más
