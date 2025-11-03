@@ -15,7 +15,6 @@ export default function CoachingTeaser() {
           transition={{ duration: 0.45 }}
           className="relative overflow-hidden rounded-2xl ring-1 ring-white/10 bg-black"
         >
-          {/* Reemplazá por tu foto */}
           <Image
             src="/gaston-cut.jpg"
             alt="Coaching de barbería por Gastón"
@@ -34,16 +33,18 @@ export default function CoachingTeaser() {
           className="rounded-2xl border border-white/10 bg-[#0b1526] p-6 flex flex-col"
         >
           <h2 className="text-3xl font-bold">Coaching de Barbería</h2>
+
           <p className="mt-2 text-white/80">
-            SOPs simples, scripts de venta y un tablero de KPIs. Subí ticket,
-            re-agendado y retail en 4–8 semanas.
+            Te ayudo a llenar la agenda, subir el precio sin perder clientes y vender más producto.
+            Paso a paso, fácil de aplicar en tu día a día.
           </p>
 
           <ul className="mt-4 grid gap-2 text-white/80 text-sm">
             {[
-              "+20% ticket promedio",
-              "60% re-agendado al salir",
-              "Retail que rota con 5 SKUs",
+              "Más turnos: cómo conseguir mensajes y que confirmen",
+              "Más ticket: combos simples y cómo ofrecer sin ser pesado",
+              "Contenido que trae clientes: qué grabar y cómo subirlo",
+              "Mensajes listos para WhatsApp y recordatorios",
             ].map((i) => (
               <li key={i} className="flex gap-2">
                 <span className="mt-1 h-1.5 w-1.5 rounded-full bg-blue-400" />
@@ -52,9 +53,13 @@ export default function CoachingTeaser() {
             ))}
           </ul>
 
+          <div className="mt-4 rounded-xl bg-white/5 ring-1 ring-white/10 p-3 text-xs text-white/70">
+            Resultado típico de alumnos: más consultas en 2–4 semanas y clientes que vuelven.
+          </div>
+
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
-              href="/coaching-barberia/"
+              href="/coaching-barberia"
               className="px-5 py-3 rounded-xl bg-blue-500 hover:bg-blue-400 font-semibold"
             >
               Saber más

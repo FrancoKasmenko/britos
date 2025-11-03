@@ -105,34 +105,81 @@ export default function Coaching() {
       </section>
 
       {/* TRATAR CON FAMOSOS */}
-      <section className="mx-auto max-w-[1100px] px-4 mt-16 grid gap-8 lg:grid-cols-2">
-        <div className="rounded-2xl border border-white/10 bg-[#0b1526] p-5">
-          <h3 className="text-lg font-semibold mb-2">Cómo tratar con famosos</h3>
-          <ul className="text-sm text-white/80 space-y-2">
-            <li>• Mensaje correcto: breve, claro, con propuesta.</li>
-            <li>• Turno y timing: cómo encajar su agenda con la tuya.</li>
-            <li>• En el sillón: trato, privacidad y contenido permitido.</li>
-            <li>• Después: qué subir, cuándo etiquetar y cómo capitalizar.</li>
-          </ul>
-          <a
-            href={WHATSAPP}
-            target="_blank"
-            rel="noopener"
-            className="mt-4 inline-flex px-4 py-2 rounded-xl bg-white text-black font-semibold hover:bg-blue-100"
-          >
-            Quiero ese módulo
-          </a>
-        </div>
-        <div className="relative overflow-hidden rounded-2xl ring-1 ring-white/10 bg-black">
-          <Image
-            src="/gaston-famous.jpg"
-            alt="Sesión con famoso"
-            width={1100}
-            height={900}
-            className="w-full h-full object-cover"
-          />
-        </div>
-      </section>
+      <section className="mx-auto max-w-[1100px] px-4 mt-16 grid gap-8 lg:grid-cols-2 items-stretch">
+  {/* Texto */}
+  <div className="rounded-2xl border border-white/10 bg-[#0b1526] p-6 flex flex-col justify-center text-center">
+    <h3 className="text-2xl font-semibold">Cómo tratar con famosos</h3>
+
+    <p className="mt-3 text-white/80">
+      Convertí una visita en relaciones a largo plazo. Qué decir, cómo
+      coordinar, qué grabar y cómo subirlo sin quemar el vínculo.
+    </p>
+
+    <div className="mt-5 grid gap-3 sm:grid-cols-2 text-sm text-white/85 text-left">
+      <ul className="space-y-2">
+        <li>• Primer mensaje: corto, con propuesta clara y objetivo.</li>
+        <li>• Puentes: quién te presenta y qué pedir exactamente.</li>
+        <li>• Agenda: opciones cerradas, confirmación y recordatorio.</li>
+        <li>• Depósito y no-show: políticas que no espantan.</li>
+      </ul>
+      <ul className="space-y-2">
+        <li>• En silla: manejo de tiempos, privacidad y acompañantes.</li>
+        <li>• Contenido: guion rápido, 3 tomas útiles y permisos.</li>
+        <li>• Etiquetas: cuándo postear, cómo mencionar y negociar repost.</li>
+        <li>• After: seguimiento, próxima fecha y paquete de cortes.</li>
+      </ul>
+    </div>
+
+    <div className="mt-5 grid gap-2 sm:grid-cols-3">
+      <div className="rounded-lg bg-white/5 ring-1 ring-white/10 p-3">
+        <div className="text-xl font-bold">+ Alcance</div>
+        <div className="text-white/60 text-xs">Contenido con propósito</div>
+      </div>
+      <div className="rounded-lg bg-white/5 ring-1 ring-white/10 p-3">
+        <div className="text-xl font-bold">+ Ticket</div>
+        <div className="text-white/60 text-xs">Bundle y upsell sutil</div>
+      </div>
+      <div className="rounded-lg bg-white/5 ring-1 ring-white/10 p-3">
+        <div className="text-xl font-bold">+ Repetición</div>
+        <div className="text-white/60 text-xs">Reagendar en el acto</div>
+      </div>
+    </div>
+
+    <div className="mt-6 flex flex-wrap justify-center gap-3">
+      <a
+        href={WHATSAPP}
+        target="_blank"
+        rel="noopener"
+        className="px-5 py-3 rounded-xl bg-white text-black font-semibold hover:bg-blue-100"
+      >
+        Quiero ese módulo
+      </a>
+      <a
+        href="/coaching-barberia#planes"
+        className="px-5 py-3 rounded-xl border border-white/15 hover:border-white/30"
+      >
+        Ver planes
+      </a>
+    </div>
+
+    <p className="mt-3 text-xs text-white/50">
+      Incluye guiones de mensaje, checklist de sesión y plantilla de post.
+    </p>
+  </div>
+
+  {/* Imagen */}
+  <div className="relative overflow-hidden rounded-2xl ring-1 ring-white/10 bg-black">
+    <Image
+      src="/gaston-famous.jpg"
+      alt="Sesión con famoso"
+      width={1100}
+      height={900}
+      className="w-full h-full object-cover"
+      priority
+    />
+  </div>
+</section>
+
 
       {/* RESULTADOS EN SIMPLE */}
       <section className="mx-auto max-w-[1100px] px-4 mt-16">
